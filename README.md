@@ -32,25 +32,25 @@ SentinelAI models the attacker-defender interaction as a **dynamic Stackelberg G
 
 ## Key Features
 
-### 1. 🎮 Dynamic Stackelberg Game Engine — RASRO
+### 1. Dynamic Stackelberg Game Engine — RASRO
 
 - Models **SOC (Leader)** and **Insider (Follower)** interactions using historical PostgreSQL data.
 - Calculates **AAS** and **RES** to track attacker adaptation and defense effectiveness.
 - Supports adaptive actions such as `REVOKE_SESSION` and `RESTRICT_ACCESS`.
 
-### 2. 🤖 Explainable AI (XAI)
+### 2. Explainable AI (XAI)
 
 - Uses **Isolation Forest** and **One-Class SVM** to detect unusual behavior.
 - **Tree SHAP** explains which features contributed to each anomaly decision.
 
-### 3. 🔐 Post-Quantum Cryptography (PQC)
+### 3. Post-Quantum Cryptography (PQC)
 
 - **ML-KEM** for secure post-quantum key establishment.
 - **ML-DSA** for signing security decisions and audit records.
 
 > **ML-KEM → ML-DSA → Signed Decision → PostgreSQL Audit**
 
-### 4. 📈 Interactive Ablation Simulator
+### 4. Interactive Ablation Simulator
 
 - React-based multi-cycle attack simulation with **Massive Exfiltration** and **Stealth Evasion** scenarios.
 - Visualizes **AAS, RES, attacker adaptation, and defense response**, comparing static and adaptive detection.
@@ -116,11 +116,11 @@ SentinelAI models the attacker-defender interaction as a **dynamic Stackelberg G
 ![SentinelAI System Architecture](./images/architecture.png)
 
 ---
-## 🏗️ Architecture & Data Modeling
+## ⚙️ Architecture Components
 
 The system is organized into a complete pipeline covering data collection, anomaly detection, explainability, game-theoretic decision making, security enforcement, post-quantum protection, and audit storage.
 
-### ⚙️ Core Components
+### Core Components
 
 - **Backend:** FastAPI + SQLAlchemy for REST APIs, application logic, and database management.
 - **Database:** PostgreSQL for telemetry, historical interaction states, and audit records.
@@ -131,7 +131,7 @@ The system is organized into a complete pipeline covering data collection, anoma
 - **Enforcement:** Adaptive security actions such as monitoring, step-up authentication, access restriction, and access revocation.
 - **Audit & Feedback:** Stores decisions and enforcement outcomes while feeding new behavioral data back into the system.
 
-### 🔐 Post-Quantum Security Layer
+### Post-Quantum Security Layer
 
 The PQC layer contains two main components:
 
@@ -146,7 +146,7 @@ The PQC layer contains two main components:
 
 ---
 
-## 🎮 Stackelberg Research Metrics
+## Stackelberg Research Metrics
 
 | Metric | Range | Description | Game Theory Role |
 | :--- | :---: | :--- | :--- |
@@ -155,7 +155,7 @@ The PQC layer contains two main components:
 
 ---
 
-## 🔐 PQC Security Flow
+## PQC Security Flow
 
     Security Decision
            │
@@ -186,7 +186,7 @@ The PQC layer contains two main components:
 
 ## 🚀 Getting Started
 
-### 📋 Prerequisites
+### Prerequisites
 
 - 🐍 Python 3.10+
 - 🟢 Node.js v18+
