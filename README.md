@@ -57,7 +57,7 @@ SentinelAI models the attacker-defender interaction as a **dynamic Stackelberg G
 
 ---
 
-## Platform Screenshots
+## 🔐 Platform Screenshots
 
 ### Secure Access Portal
 
@@ -101,7 +101,7 @@ SentinelAI models the attacker-defender interaction as a **dynamic Stackelberg G
 <!-- 📸 AUDIT SCREENSHOT -->
 ![Audit Telemetry](./images/audit-telemetry.png)
 
-### End-to-End Decision & Enforcement Workflow
+### 🔄 End-to-End Decision & Enforcement Workflow
 
 > End-to-end flow showing how telemetry moves through anomaly detection, XAI analysis, RASRO evaluation, mitigation decision, cryptographic protection, and enforcement.
 
