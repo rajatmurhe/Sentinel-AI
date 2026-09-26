@@ -30,7 +30,7 @@ SentinelAI models the attacker-defender interaction as a **dynamic Stackelberg G
 
 ---
 
-## Key Features
+## 🎮 Key Features
 
 ### 1. Dynamic Stackelberg Game Engine — RASRO
 
