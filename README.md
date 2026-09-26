@@ -30,83 +30,78 @@ SentinelAI models the attacker-defender interaction as a **dynamic Stackelberg G
 
 ---
 
-## 🔥 Key Features
+## Key Features
 
 ### 1. 🎮 Dynamic Stackelberg Game Engine — RASRO
 
-- Models the **SOC as the Leader** and the **Insider as the Follower** across multiple interactions.
-- Uses PostgreSQL history to track changing attacker behavior.
-- Calculates **AAS (Attacker Adaptation Score)** and **RES (Response Effectiveness Score)**.
-- Supports adaptive mitigation actions such as `REVOKE_SESSION` and `RESTRICT_ACCESS`.
+- Models **SOC (Leader)** and **Insider (Follower)** interactions using historical PostgreSQL data.
+- Calculates **AAS** and **RES** to track attacker adaptation and defense effectiveness.
+- Supports adaptive actions such as `REVOKE_SESSION` and `RESTRICT_ACCESS`.
 
 ### 2. 🤖 Explainable AI (XAI)
 
-- Uses **Isolation Forest** and **One-Class SVM** to detect unusual user behavior.
-- Analyzes signals such as data transfer, login times, and sensitive file access.
-- Uses **Tree SHAP** to show which features contributed to an anomaly decision.
+- Uses **Isolation Forest** and **One-Class SVM** to detect unusual behavior.
+- **Tree SHAP** explains which features contributed to each anomaly decision.
 
 ### 3. 🔐 Post-Quantum Cryptography (PQC)
 
-- **ML-KEM:** Used for post-quantum secure key establishment.
-- **ML-DSA:** Used for digital signatures on security decisions and audit records.
-- Protects the integrity and authenticity of important security events.
+- **ML-KEM** for secure post-quantum key establishment.
+- **ML-DSA** for signing security decisions and audit records.
 
-> **ML-KEM → Secure Key Establishment → ML-DSA → Signed Security Decision → PostgreSQL Audit Record**
+> **ML-KEM → ML-DSA → Signed Decision → PostgreSQL Audit**
 
 ### 4. 📈 Interactive Ablation Simulator
 
-- React dashboard for multi-cycle attack simulations.
-- Supports scenarios such as **Massive Exfiltration** and **Stealth Evasion**.
-- Visualizes **AAS, RES, attacker adaptation, and defense response**.
-- Compares static detection with the adaptive game-theoretic approach.
+- React-based multi-cycle attack simulation with **Massive Exfiltration** and **Stealth Evasion** scenarios.
+- Visualizes **AAS, RES, attacker adaptation, and defense response**, comparing static and adaptive detection.
 
 ---
 
-## 📊 Platform Screenshots
+## Platform Screenshots
 
-### 🔑 Secure Access Portal
+### Secure Access Portal
 
 > Role-based login system that protects access to the SOC dashboard and backend resources.
 
 <!-- 📸 LOGIN SCREENSHOT -->
 ![Secure Login](./images/login-page.png)
 
-### 🖥️ Executive SOC Dashboard
+### Executive SOC Dashboard
 
 > Displays incoming telemetry, active security incidents, anomaly scores, and Tree SHAP feature attribution.
 
 <!-- 📸 SOC DASHBOARD SCREENSHOT -->
 ![Executive SOC Dashboard](./images/soc-dashboard.png)
 
-### 🎯 Adaptive Attacker Simulator
+### Adaptive Attacker Simulator
 
 > Allows users to run multi-cycle attack simulations using custom telemetry or predefined scenarios such as **Massive Exfiltration** and **Stealth Evasion**.
 
 <!-- 📸 SIMULATOR SCREENSHOT -->
 ![Threat Simulator Input](./images/threat-simulator.png)
 
-### 📈 Research Ablation Study & Time-Series Graphs
+### Research Ablation Study & Time-Series Graphs
 
 > Displays how the **Attacker Adaptation Score (AAS)** and **Response Effectiveness (RES)** change across multiple attack turns.
 
 <!-- 📸 GRAPHS SCREENSHOT -->
 ![Ablation Study Graphs](./images/ablation-graphs.png)
 
-### 🔑 ML-KEM & ML-DSA Post-Quantum Cryptography
+### ML-KEM & ML-DSA Post-Quantum Cryptography
 
 > Terminal demonstration showing the ML-KEM key encapsulation process and ML-DSA digital signature generation and verification.
 
 <!-- 📸 PQC TERMINAL SCREENSHOT -->
 ![ML-KEM and ML-DSA Terminal](./images/pqc-terminal.png)
 
-### 🔐 Cryptographic Audit Ledger
+### Cryptographic Audit Ledger
 
 > Displays the historical record of telemetry events, anomaly decisions, and Stackelberg mitigation actions.
 
 <!-- 📸 AUDIT SCREENSHOT -->
 ![Audit Telemetry](./images/audit-telemetry.png)
 
-### 🔄 End-to-End Decision & Enforcement Workflow
+### End-to-End Decision & Enforcement Workflow
 
 > End-to-end flow showing how telemetry moves through anomaly detection, XAI analysis, RASRO evaluation, mitigation decision, cryptographic protection, and enforcement.
 
