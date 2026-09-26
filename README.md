@@ -4,10 +4,6 @@ An end-to-end **cybersecurity research framework and data pipeline** designed to
 
 Unlike traditional anomaly detection systems that rely on fixed behavioral patterns, SentinelAI models how attackers can change their behavior to avoid detection. It combines **Game Theory, Explainable AI (XAI), and Post-Quantum Cryptography (PQC)** to create an adaptive and secure threat detection environment.
 
-<!-- 📸 HERO SCREENSHOT PLACEHOLDER -->
-![SentinelAI Main Dashboard](./images/soc-dashboard.png)
-
-
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=flat&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-18-20232A?style=flat&logo=react&logoColor=61DAFB)
@@ -18,6 +14,9 @@ Unlike traditional anomaly detection systems that rely on fixed behavioral patte
 ![PQC](https://img.shields.io/badge/Post--Quantum_Cryptography-512BD4?style=flat)
 ![ML--KEM](https://img.shields.io/badge/ML--KEM-Key_Encapsulation-6A1B9A?style=flat)
 ![ML--DSA](https://img.shields.io/badge/ML--DSA-Digital_Signatures-8E24AA?style=flat)
+
+<!-- 📸 HERO SCREENSHOT PLACEHOLDER -->
+![SentinelAI Main Dashboard](./images/soc-dashboard.png)
 
 ---
 
@@ -122,24 +121,20 @@ SentinelAI models the attacker-defender interaction as a **dynamic Stackelberg G
 ![SentinelAI System Architecture](./images/architecture.png)
 
 ---
-
 ## 🏗️ Architecture & Data Modeling
 
-### ⚙️ Backend & Data Pipeline
+The system is organized into a complete pipeline covering data collection, anomaly detection, explainability, game-theoretic decision making, security enforcement, post-quantum protection, and audit storage.
 
-- **Core Framework:** FastAPI for REST API routing and backend services.
-- **Database ORM:** SQLAlchemy for managing database models and application data.
-- **Persistence:** PostgreSQL for structured data and historical state tracking.
-- **Machine Learning:** Scikit-Learn using Isolation Forest, One-Class SVM, and SHAP for anomaly detection and explainability.
+### ⚙️ Core Components
+
+- **Backend:** FastAPI + SQLAlchemy for REST APIs, application logic, and database management.
+- **Database:** PostgreSQL for telemetry, historical interaction states, and audit records.
+- **Machine Learning:** Isolation Forest + One-Class SVM for anomaly detection, with SHAP for explainability.
 - **Game Engine:** RASRO-based Stackelberg evaluation for adaptive attacker-defender interactions.
-- **Cryptography:** ML-KEM and ML-DSA for post-quantum key establishment and digital signatures.
-
-### 💻 Frontend
-
-- **Core:** React 18 with Axios for API communication.
-- **Styling:** Tailwind CSS for the dark-mode SOC interface.
-- **Visualization:** Recharts for interactive time-series graphs and data visualization.
-- **Simulation:** Interactive threat telemetry and multi-cycle attack simulation interface.
+- **PQC Layer:** ML-KEM for key encapsulation and ML-DSA for digital signatures.
+- **Frontend:** React 18 + Tailwind CSS + Recharts for the SOC dashboard, simulations, and visualizations.
+- **Enforcement:** Adaptive security actions such as monitoring, step-up authentication, access restriction, and access revocation.
+- **Audit & Feedback:** Stores decisions and enforcement outcomes while feeding new behavioral data back into the system.
 
 ### 🔐 Post-Quantum Security Layer
 
