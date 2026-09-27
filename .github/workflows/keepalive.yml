@@ -1,0 +1,36 @@
+name: 24/7 Keep-Alive Ping
+
+on:
+  schedule:
+    # Ping every 10 minutes to prevent Render free-tier from idling/sleeping
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Keep-Alive Ping
+        run: |
+          TARGET_URL="${{ secrets.RENDER_SERVICE_URL }}"
+          if [ -z "$TARGET_URL" ]; then
+            echo "INFO: RENDER_SERVICE_URL secret is not set yet in GitHub Secrets."
+            echo "Once deployed, add your app URL (e.g., https://sentinel-ai.onrender.com) to Settings -> Secrets and variables -> Actions."
+            exit 0
+          fi
+          
+          # Remove trailing slash if present
+          TARGET_URL="${TARGET_URL%/}"
+          HEALTH_URL="$TARGET_URL/health"
+          
+          echo "Pinging $HEALTH_URL..."
+          HTTP_STATUS=$(curl -s -L -o /dev/null -w "%{http_code}" --max-time 30 "$HEALTH_URL")
+          echo "Response HTTP Status: $HTTP_STATUS"
+          
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 400 ]; then
+            echo "SUCCESS: SentinelAI is active and responsive (HTTP $HTTP_STATUS)."
+          else
+            echo "WARNING: Keep-alive received HTTP $HTTP_STATUS. Attempting root ping fallback..."
+            FALLBACK_STATUS=$(curl -s -L -o /dev/null -w "%{http_code}" --max-time 30 "$TARGET_URL/")
+            echo "Root URL Response: $FALLBACK_STATUS"
+          fi

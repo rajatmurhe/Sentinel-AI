@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: sentinel-ai
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: SECRET_KEY
+        generateValue: true
