@@ -25,3 +25,22 @@ Original and enhanced outputs are preserved separately. Updated figures are deri
 The live session detector remains a clearly labelled synthetic demonstration detector. Saved CERT joblib models expect the user-day schema and are research artifacts, not automatically interchangeable session models. Application actions are decisions/recommendations; endpoint enforcement is simulated. Existing cryptography modules are placeholders, not validated ML-KEM/ML-DSA implementations.
 
 Frontend npm audit still reports inherited development-tool dependencies requiring breaking upgrades (Tailwind/Vite); these were not force-upgraded in this research change. Deployment only serves built static assets, not the Vite dev server.
+
+
+## Hosted verification completed
+
+Render automatically deployed code commit `4f7a11b3a864174aeff86b4283609f0e14b19f16`
+to https://sentinel-ai-czmu.onrender.com. Its `/health` now reports version 0.6.0.
+GitHub Actions run 39449206084 passed on Linux with PostgreSQL 16.
+
+Authenticated live API checks passed for dashboard statistics, six detection
+models, four adaptive policies, five-seed metadata, CSV/report downloads and all
+three PNG figures. The isolated live experiment returned eight turns, seven
+nonzero-AAS observations and consistent previous-defence history. Unauthenticated
+research access returned 401. These tests did not inject telemetry into production
+user histories. Exact response status/details are in hosted-verification.json;
+credentials and tokens are intentionally absent.
+
+The hosted APIs and built local browser flow are verified. Visual interaction with
+the hosted page remains untested because browser controls were disabled in Work
+settings; this is not a claim of a full cross-browser or production-security audit.

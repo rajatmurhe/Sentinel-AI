@@ -1,0 +1,97 @@
+{
+  "health": {
+    "status": "healthy",
+    "service": "sentinel-ai",
+    "platform": "SentinelAI Enterprise Platform",
+    "version": "0.6.0"
+  },
+  "new_routes_present": true,
+  "unauthenticated_research_status": 401,
+  "login_status": 200,
+  "research": {
+    "status": 200,
+    "models": 6,
+    "policies": 4,
+    "protocol": "enhanced",
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "files": [
+      "ablation-summary.csv",
+      "adaptive-metrics.png",
+      "adaptive-summary.csv",
+      "detection-summary.csv",
+      "manifest.json",
+      "paired-comparisons.csv",
+      "precision-recall.png",
+      "research-report.md",
+      "research-results.png",
+      "validation-selection.csv"
+    ]
+  },
+  "downloads": {
+    "research-results.png": {
+      "status": 200,
+      "bytes": 110332,
+      "content_type": "image/png"
+    },
+    "adaptive-metrics.png": {
+      "status": 200,
+      "bytes": 86698,
+      "content_type": "image/png"
+    },
+    "precision-recall.png": {
+      "status": 200,
+      "bytes": 200397,
+      "content_type": "image/png"
+    },
+    "detection-summary.csv": {
+      "status": 200,
+      "bytes": 1918,
+      "content_type": "text/csv; charset=utf-8"
+    },
+    "research-report.md": {
+      "status": 200,
+      "bytes": 4112,
+      "content_type": "text/plain; charset=utf-8"
+    }
+  },
+  "dashboard": {
+    "status": 200,
+    "model_source": "synthetic demonstration detector",
+    "latest_metric_fields": [
+      "aas",
+      "action",
+      "attacker_state",
+      "previous_defence",
+      "res",
+      "res_available",
+      "risk_score",
+      "shap_attributions"
+    ]
+  },
+  "isolated_adaptive_experiment": {
+    "status": 200,
+    "turns": 8,
+    "nonzero_aas_turns": 7,
+    "history_consistent": true,
+    "defences": [
+      "STEP_UP_AUTH",
+      "RESTRICT",
+      "MONITOR",
+      "MONITOR",
+      "MONITOR",
+      "MONITOR",
+      "MONITOR",
+      "MONITOR"
+    ]
+  },
+  "checked_at_utc": "2026-10-20T15:35:00.586890+00:00",
+  "url": "https://sentinel-ai-czmu.onrender.com",
+  "validated_code_commit": "4f7a11b3a864174aeff86b4283609f0e14b19f16",
+  "ci_url": "https://github.com/rajatmurhe/Sentinel-AI/actions/runs/39449206084"
+}
