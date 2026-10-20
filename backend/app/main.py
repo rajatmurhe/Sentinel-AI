@@ -7,9 +7,10 @@ from fastapi.responses import FileResponse
 from app.core.database import engine, Base, SessionLocal
 from app.core.security import get_password_hash
 from app.models.models import User, ActivityLog
-from app.api import auth, users, activities, analytics, alerts, incidents
+from app.api import auth, users, activities, analytics, alerts, incidents, experiments, research_results
+from app.core.migrations import upgrade_schema
 
-Base.metadata.create_all(bind=engine)
+
 
 def bootstrap_defaults():
     db = SessionLocal()
@@ -51,10 +52,11 @@ def bootstrap_defaults():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    upgrade_schema(engine)
     bootstrap_defaults()
     yield
 
-app = FastAPI(title="SentinelAI Enterprise Platform", version="0.5.0", lifespan=lifespan)
+app = FastAPI(title="SentinelAI Enterprise Platform", version="0.6.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -71,10 +73,12 @@ app.include_router(activities.router)
 app.include_router(analytics.router)
 app.include_router(alerts.router)
 app.include_router(incidents.router)
+app.include_router(experiments.router)
+app.include_router(research_results.router)
 
 @app.get("/health")
 def health():
-    return {"status": "healthy", "service": "sentinel-ai", "platform": "SentinelAI Enterprise Platform"}
+    return {"status": "healthy", "service": "sentinel-ai", "platform": "SentinelAI Enterprise Platform", "version": "0.6.0"}
 
 # Frontend SPA distribution discovery
 base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

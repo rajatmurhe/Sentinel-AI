@@ -10,7 +10,7 @@ export default function DecisionPanel({ action = 'ALLOW', riskScore = 0 }) {
           color: 'text-emerald-400',
           border: 'border-emerald-500/30',
           bg: 'bg-emerald-950/20',
-          desc: 'Telemetry consistent with normal enterprise baseline. Unrestricted operational access maintained.'
+          desc: 'Telemetry consistent with normal enterprise baseline. Continued access recommended.'
         };
       case 'MONITOR':
         return {
@@ -18,7 +18,7 @@ export default function DecisionPanel({ action = 'ALLOW', riskScore = 0 }) {
           color: 'text-yellow-400',
           border: 'border-yellow-500/30',
           bg: 'bg-yellow-950/20',
-          desc: 'Anomalous deviation noted. High-frequency telemetry logging enabled for session inspection.'
+          desc: 'Anomalous deviation noted. Closer session monitoring recommended.'
         };
       case 'STEP_UP_AUTH':
         return {
@@ -26,7 +26,7 @@ export default function DecisionPanel({ action = 'ALLOW', riskScore = 0 }) {
           color: 'text-amber-400',
           border: 'border-amber-500/30',
           bg: 'bg-amber-950/20',
-          desc: 'Suspicious privilege/time violation. Secondary biometric or multi-factor re-challenge enforced.'
+          desc: 'Suspicious privilege/time violation. Additional authentication recommended.'
         };
       case 'RESTRICT':
         return {
@@ -34,7 +34,7 @@ export default function DecisionPanel({ action = 'ALLOW', riskScore = 0 }) {
           color: 'text-orange-400',
           border: 'border-orange-500/30',
           bg: 'bg-orange-950/20',
-          desc: 'Exfiltration footprint identified. Revoked file read and large egress capabilities.'
+          desc: 'Exfiltration footprint identified. File-access and egress restrictions recommended.'
         };
       case 'REVOKE':
         return {
@@ -42,7 +42,7 @@ export default function DecisionPanel({ action = 'ALLOW', riskScore = 0 }) {
           color: 'text-red-400',
           border: 'border-red-500/40',
           bg: 'bg-red-950/30',
-          desc: 'High-severity malicious insider data exfiltration detected. Immediate token invalidation.'
+          desc: 'High-severity malicious insider data exfiltration detected. Session revocation recommended.'
         };
       default:
         return {
@@ -65,7 +65,7 @@ export default function DecisionPanel({ action = 'ALLOW', riskScore = 0 }) {
           <span className="text-[10px] font-mono tracking-widest uppercase text-gray-400">
             STRATEGIC RESPONSE ORCHESTRATION (RASRO)
           </span>
-          <div className="text-xs text-gray-500 font-mono">Bayesian Stackelberg Game Engine</div>
+          <div className="text-xs text-gray-500 font-mono">Adaptive Stackelberg Game Engine</div>
         </div>
         <div className="px-2 py-0.5 rounded text-[10px] font-mono border border-gray-700 bg-sentinel-950/60 text-gray-300">
           CLOSED-LOOP
@@ -77,7 +77,7 @@ export default function DecisionPanel({ action = 'ALLOW', riskScore = 0 }) {
           <Icon className={`w-6 h-6 ${theme.color}`} />
         </div>
         <div>
-          <div className="text-[10px] text-gray-400 font-mono">ENFORCED SECURITY DECISION</div>
+          <div className="text-[10px] text-gray-400 font-mono">RECOMMENDED SECURITY DECISION</div>
           <div className={`text-xl font-black font-mono tracking-wide ${theme.color}`}>
             {action}
           </div>

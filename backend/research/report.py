@@ -34,7 +34,10 @@ def render_results(output):
     source = provenance.get('source', 'Unknown') if isinstance(provenance, dict) else 'Unknown'
     release = provenance.get('release', '') if isinstance(provenance, dict) else ''
     dataset_label = f'{source} {release}'.strip()
-    det = _mean_std(detection_runs, ['precision', 'recall', 'f1', 'roc_auc', 'false_positive_rate'], 'model')
+    det_metrics = ['precision', 'recall', 'f1', 'roc_auc', 'false_positive_rate']
+    if 'average_precision' in detection_runs:
+        det_metrics.append('average_precision')
+    det = _mean_std(detection_runs, det_metrics, 'model')
     sim_metrics = ['attack_success_rate', 'successful_malicious_actions', 'malicious_attempts',
                    'exfiltrated_mb', 'risk_after_defence', 'risk_reduction', 'aas', 'res',
                    'adaptation_handling', 'response_ms']
@@ -70,6 +73,21 @@ def render_results(output):
     fig.savefig(output / 'adaptive-metrics.png', dpi=180)
     plt.close(fig)
 
+    if 'average_precision_mean' in det:
+        from sklearn.metrics import precision_recall_curve
+        fig, axes = plt.subplots(1, 2, figsize=(13, 5), constrained_layout=True)
+        _bar(axes[0], det, 'model', 'average_precision_mean', 'average_precision_std',
+             'Average precision', 'mean ± SD across seeds')
+        for model, suffix, color in [('Isolation Forest','Isolation_Forest','#2563eb'), ('One-Class SVM','One-Class_SVM','#d97706'),
+                                     ('Baseline','0','#64748b'), ('Full SentinelAI','3','#059669')]:
+            for i, seed in enumerate(manifest['seeds']):
+                f = pd.read_csv(output / f'detection-{seed}-{suffix}.csv')
+                precision, recall, _ = precision_recall_curve(f.label, f.score)
+                axes[1].plot(recall, precision, color=color, alpha=.45, label=model if i == 0 else None)
+        axes[1].set(xlabel='Recall', ylabel='Precision (log scale)', title='Held-out precision–recall curves (all seeds)', yscale='log', ylim=(1e-4,1.05))
+        axes[1].legend(); axes[1].grid(alpha=.2)
+        fig.savefig(output / 'precision-recall.png', dpi=180); plt.close(fig)
+
     names = {
         'Isolation Forest': 'Isolation Forest', 'One-Class SVM': 'One-Class SVM',
         'Baseline': 'Static SentinelAI baseline', '+ AAS': 'AAS ablation',
@@ -95,6 +113,10 @@ def render_results(output):
             mean, std = getattr(row, f'{metric}_mean'), getattr(row, f'{metric}_std')
             return 'n/a' if pd.isna(mean) else f'{mean:.3f} ± {std:.3f}'
         lines.append(f'| {label} | {fmt("attack_success_rate")} | {fmt("successful_malicious_actions")} | {fmt("malicious_attempts")} | {fmt("exfiltrated_mb")} | {fmt("risk_after_defence")} | {fmt("risk_reduction")} | {fmt("aas")} | {fmt("res")} | {fmt("adaptation_handling")} | {fmt("response_ms")} |')
+    if 'average_precision_mean' in det:
+        lines += ['', '## Average precision', '', '| Model | AP mean ± SD |', '|---|---:|']
+        for row in det.itertuples():
+            lines.append(f'| {names.get(row.model,row.model)} | {row.average_precision_mean:.6f} ± {row.average_precision_std:.6f} |')
     limits = []
     if source == 'CERT':
         limits += ['CERT insider labels mark official activity windows; they do not label each event as malicious. The extracted observational data cannot establish that a response caused a later change, so its AAS/RES are observational temporal measures.',

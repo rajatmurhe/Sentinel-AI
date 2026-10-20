@@ -17,7 +17,7 @@ export default function Navbar({ activeTab, setActiveTab, onLogout, userRole }) 
               </span>
               <span className="flex items-center space-x-1 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-mono text-emerald-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>SOC ONLINE</span>
+                <span>SOC CONSOLE</span>
               </span>
             </div>
             <div className="text-[10px] text-gray-500 font-mono tracking-tight">
@@ -62,6 +62,10 @@ export default function Navbar({ activeTab, setActiveTab, onLogout, userRole }) 
           >
             <Database className="w-3.5 h-3.5" />
             <span>AUDIT TELEMETRY</span>
+          </button>
+          <button onClick={() => setActiveTab('research')}
+            className={`px-4 py-1.5 rounded-md text-xs font-semibold ${activeTab === 'research' ? 'bg-blue-600 text-white' : 'text-gray-400'}`}>
+            RESEARCH RESULTS
           </button>
         </nav>
 

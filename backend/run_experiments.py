@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 import numpy as np
 import pandas as pd
 import sklearn
-from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix, average_precision_score
 from app.ml.feature_pipeline import FEATURE_ORDER
 from app.ml.generator import SyntheticDataGenerator
 from research.protocol import ResearchModels, VARIANTS, split_chronologically, replay
@@ -30,6 +30,7 @@ def classification_metrics(y, scores, threshold):
             'recall': recall_score(y, predictions, zero_division=0),
             'f1': f1_score(y, predictions, zero_division=0),
             'roc_auc': roc_auc_score(y, scores) if len(np.unique(y)) == 2 else np.nan,
+            'average_precision': average_precision_score(y, scores),
             'false_positive_rate': fp / (fp+tn) if fp+tn else np.nan,
             'tp': int(tp), 'fp': int(fp), 'tn': int(tn), 'fn': int(fn), 'threshold': threshold}
 
@@ -90,6 +91,8 @@ def run(args):
     if test.label.nunique() != 2:
         raise ValueError('Test split needs benign and malicious user-days for a meaningful comparison')
     manifest = {'started_utc': datetime.now(timezone.utc).isoformat(), 'provenance': provenance,
+                'evaluation_mode': args.protocol,
+                'threshold_selection': 'validation F1 under FPR ceiling' if args.protocol == 'enhanced' else 'benign validation quantile',
                 'seeds': args.seeds, 'max_train': args.max_train, 'episodes_per_seed': args.episodes,
                 'turns': args.turns, 'target_validation_fpr': args.target_fpr,
                 'splits': {name: {'rows': len(f), 'positives': int(f.label.sum()), 'first_date': f.date.min(),
@@ -103,13 +106,25 @@ def run(args):
                     'Five seeds measure training/simulator variability on one temporal split, not confidence intervals across populations.',
                     'Ablations may worsen performance. No improvement is assumed.']}
     (output/'manifest.json').write_text(json.dumps(clean_json(manifest), indent=2, allow_nan=False))
-    detection, simulation, episodes = [], [], []
+    detection, simulation, episodes, selection = [], [], [], []
+    from research.enhanced import EnhancedResearchModels, validation_threshold
+    model_class = EnhancedResearchModels if args.protocol == 'enhanced' else ResearchModels
+    def threshold_for(labels, scores):
+        if args.protocol == 'enhanced':
+            return validation_threshold(labels, scores, args.target_fpr)
+        return float(np.quantile(np.asarray(scores)[np.asarray(labels) == 0], 1.-args.target_fpr))
     for seed in args.seeds:
         print(f'Seed {seed}: train and score detection models', flush=True)
-        models = ResearchModels(features, seed, args.max_train).fit(train, valid)
+        models = model_class(features, seed, args.max_train).fit(train, valid)
+        if args.protocol == 'enhanced':
+            selection.extend(models.selection)
+            pd.DataFrame(selection).to_csv(output/'validation-selection.csv',index=False)
+        if args.save_models:
+            import joblib
+            joblib.dump(models, output/f'detector-seed-{seed}.joblib')
         validation_scores, test_scores = models.scores(valid), models.scores(test)
         for name in ('Isolation Forest', 'One-Class SVM'):
-            threshold = float(np.quantile(validation_scores[name][valid.label.eq(0)], 1.-args.target_fpr))
+            threshold = threshold_for(valid.label, validation_scores[name])
             detection.append({'seed': seed, 'model': name, **classification_metrics(test.label, test_scores[name], threshold)})
             pd.DataFrame({'user_id':test.user_id, 'date':test.date, 'label':test.label,
                           'score':test_scores[name], 'threshold':threshold,
@@ -118,7 +133,7 @@ def run(args):
             print(f'Seed {seed}: replay {variant}', flush=True)
             vs, _ = replay(valid, validation_scores['risk'], variant, models.metrics)
             ts, records = replay(test, test_scores['risk'], variant, models.metrics)
-            threshold = float(np.quantile(vs[valid.label.eq(0)], 1.-args.target_fpr))
+            threshold = threshold_for(valid.label, vs)
             detection.append({'seed':seed, 'model':variant, **classification_metrics(test.label, ts, threshold)})
             trace = pd.DataFrame(records)
             trace['threshold'], trace['prediction'] = threshold, ts > threshold
@@ -154,6 +169,8 @@ def run(args):
     det_summary[det_summary.model.isin(VARIANTS)].merge(sim_summary, left_on='model',right_on='variant').to_csv(output/'ablation-summary.csv',index=False)
     from research.report import render_results
     render_results(output)
+    from research.statistics import write_comparisons
+    write_comparisons(output)
     manifest['completed_utc'] = datetime.now(timezone.utc).isoformat()
     (output/'manifest.json').write_text(json.dumps(clean_json(manifest), indent=2, allow_nan=False))
     print('Completed:', output.resolve(), flush=True)
@@ -165,6 +182,8 @@ if __name__ == '__main__':
     p.add_argument('--demo',action='store_true')
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--seeds',type=int,nargs='+',default=[0,1,2,3,4])
+    p.add_argument('--protocol',choices=['original','enhanced'],default='original')
+    p.add_argument('--save-models',action='store_true')
     p.add_argument('--max-train',type=int,default=6000)
     p.add_argument('--episodes',type=int,default=20)
     p.add_argument('--turns',type=int,default=8)

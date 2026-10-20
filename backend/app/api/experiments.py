@@ -1,13 +1,15 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Query
+from app.core.security import require_role
 import math
 from app.services.orchestrator import orchestrator
 from research.simulation import initial_profile, run_episode
 
-router = APIRouter(prefix="/experiments", tags=["Research"])
+router = APIRouter(prefix="/api/experiments", tags=["Research"],
+                   dependencies=[Depends(require_role(["Admin", "Analyst"]))])
 
 
 @router.post("/run-adaptive-ablation")
-def run_time_series_experiment(user_id: int = 1):
+def run_time_series_experiment(user_id: int = Query(1, ge=0, le=2147483647)):
     """Run an isolated, reproducible closed-loop attacker/defender demonstration."""
     def score(features):
         scaled = orchestrator.feature_pipeline.transform(features)

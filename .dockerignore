@@ -1,0 +1,13 @@
+.git
+.venv
+.test-postgres
+**/__pycache__
+**/.pytest_cache
+**/node_modules
+**/.env
+**/*.db
+research/data
+research/results/**/detector-*.joblib
+research/results/**/detection-[0-9]*.csv
+research/results/**/closed-loop-*.jsonl
+research/results/**/adaptive-episodes.csv

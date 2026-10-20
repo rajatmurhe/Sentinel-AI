@@ -238,7 +238,7 @@ Open a new terminal and run:
 
 Start the React dashboard:
 
-`npm start`
+`npm run dev`
 
 The SOC Dashboard will be available at:
 
@@ -309,3 +309,61 @@ SentinelAI brings together several areas of cybersecurity and AI:
 - 📊 **Data Visualization** — Analyzing attacker adaptation and defensive response through interactive dashboards and time-series graphs.
 
 The goal is to provide a practical research platform for studying **adaptive insider threats** by combining **Game Theory, Machine Learning, Explainable AI, and Post-Quantum Cryptography** in a single security workflow.
+
+
+## Verified integration update (20 October 2026)
+
+The dashboard now preserves all manual session features and its eight-turn attack
+simulation conditions each next behaviour on the previous selected defence.
+It displays AAS, RES availability, previous defence and behaviour changes.
+The Research Results tab serves saved CERT tables, figures and downloads through
+authenticated read-only endpoints. The default report is `cert-r4.2-enhanced`;
+set `RESEARCH_RESULTS_DIR` to another absolute result directory to select it.
+
+The API is `/api/experiments/run-adaptive-ablation`; it requires Admin or Analyst
+access. Startup applies an additive, idempotent SQLite/PostgreSQL schema upgrade
+without dropping historical records. The exact-vector endpoint is
+`POST /api/activities/analyze`. Application decisions remain recommendations;
+external endpoint/session enforcement is not implemented by these demos.
+
+### Enhanced research protocol
+
+`--protocol enhanced` selects one shared representation (raw, log1p, or log1p plus
+frozen training-user deviations) using the mean validation average precision of
+IF and OCSVM. All comparators receive that representation. Models fit benign
+training bootstrap samples; user references are fitted on benign training data.
+Validation F1 selects each threshold subject to a validation FPR ceiling of .05.
+This uses validation labels and is not a completely unsupervised selection
+protocol. Smooth sigmoid risk fusion avoids the original clipped upper-score
+plateau. Test labels are used only for final evaluation.
+
+This is an exploratory follow-up on the original test period, which had already
+been examined; independent confirmatory evaluation remains future work. All
+original results remain in `research/results/cert-r4.2`. New results are in
+`research/results/cert-r4.2-enhanced`. Paired seed differences, descriptive t
+intervals, exact sign-flip p-values and Holm correction are saved. With five
+pairs, a two-sided exact sign-flip test cannot attain p < .05. No statistically
+significant or universal superiority is claimed. The separate synthetic
+response experiment uses the unchanged original simulator/detector protocol.
+
+From `backend/`:
+
+```sh
+python run_experiments.py --dataset ../research/data/cert_r4.2_features.csv --output ../research/results/cert-r4.2-enhanced --protocol enhanced --save-models --seeds 0 1 2 3 4 --episodes 20 --turns 8
+python -m pytest tests -q
+```
+
+`--save-models` saves research detector objects for reproducibility. They are not
+automatically loaded as the application's session detector because CERT uses
+user-day features rather than the dashboard's session schema. Never load an
+untrusted joblib file. The UI explicitly identifies its synthetic demonstration
+detector; it does not claim to be serving the CERT model.
+
+The application includes pre-existing cryptography demonstration modules. They
+use Ed25519/AES-GCM placeholders and are not implementations of ML-DSA/ML-KEM;
+the earlier PQC marketing text/screenshots are not evidence of PQC validation.
+
+Install `backend/requirements-dev.txt` for tests. For an isolated PostgreSQL
+verification database, set `SENTINEL_TEST_DATABASE_URL` before running tests.
+Do not point tests at a production database. The Docker build uses the frontend
+lockfile and includes the committed research reports and figures.

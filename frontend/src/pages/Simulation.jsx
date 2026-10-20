@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import client from '../api/client';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Play, Sliders, ShieldAlert, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function Simulation() {
@@ -22,19 +23,22 @@ export default function Simulation() {
 
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Run Preset Threat Batch
   const runPresetSimulation = async () => {
     setLoading(true);
+    setError('');
     try {
       const res = await client.post('/api/analytics/simulate-threat', {
         user_id: parseInt(presetUserId),
         scenario: presetScenario,
-        iterations: 3,
+        iterations: 8,
+        seed: 0,
       });
       setResults(res.data.executions);
     } catch (err) {
-      console.error(err);
+      setError(typeof err.response?.data?.detail === 'string' ? err.response.data.detail : 'Analysis failed. Check the inputs and retry.');
     } finally {
       setLoading(false);
     }
@@ -44,19 +48,13 @@ export default function Simulation() {
   const runManualInjection = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
       // Direct call to analyze single custom vector
-      const res = await client.post('/api/activities/log', {
-        action_type: manualData.bytes_transferred_mb > 500 ? 'MANUAL_EXFILTRATION_TEST' : 'MANUAL_ROUTINE_ACCESS',
-        bytes_transferred: parseFloat(manualData.bytes_transferred_mb),
-        is_sensitive_file: parseInt(manualData.sensitive_files_accessed) > 0,
-        failed_attempts: parseInt(manualData.failed_logins),
-        privilege_level: parseInt(manualData.privilege_level),
-        session_duration_sec: parseFloat(manualData.session_duration_min) * 60,
-      });
+      const res = await client.post('/api/activities/analyze', manualData);
       setResults([res.data.assessment]);
     } catch (err) {
-      console.error(err);
+      setError(typeof err.response?.data?.detail === 'string' ? err.response.data.detail : 'Analysis failed. Check the inputs and retry.');
     } finally {
       setLoading(false);
     }
@@ -88,6 +86,8 @@ export default function Simulation() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
+      {error && <p role="alert" className="text-red-400">{error}</p>}
+      <p className="text-sm text-gray-400">Synthetic demonstration detector. Security actions are recommendations; attack outcomes are simulated.</p>
       {/* Mode Selector */}
       <div className="flex space-x-2 border-b border-sentinel-800 pb-4">
         <button
@@ -286,6 +286,12 @@ export default function Simulation() {
             <span>PIPELINE EXECUTION OUTPUT & MODEL VERDICTS</span>
           </h3>
 
+          {results.length > 1 && <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%"><LineChart data={results.map((r, i) => ({ turn: i + 1, risk: r.risk_score, AAS: r.adaptive_metrics?.adaptation_score_aas, RES: r.adaptive_metrics?.res_available ? r.adaptive_metrics.response_effectiveness_res : null }))}>
+              <XAxis dataKey="turn" /><YAxis yAxisId="risk" domain={[0,100]} /><YAxis yAxisId="metric" orientation="right" domain={[0,1]} /><Tooltip /><Legend />
+              <Line yAxisId="risk" dataKey="risk" stroke="#f87171" /><Line yAxisId="metric" dataKey="AAS" stroke="#60a5fa" /><Line yAxisId="metric" dataKey="RES" stroke="#34d399" />
+            </LineChart></ResponsiveContainer>
+          </div>}
           <div className="space-y-3">
             {results.map((res, i) => (
               <div
@@ -315,6 +321,12 @@ export default function Simulation() {
                   </div>
                 </div>
 
+                <div className="text-gray-300 space-y-1">
+                  <div>AAS: {res.adaptive_metrics?.adaptation_score_aas?.toFixed(3)} · RES: {res.adaptive_metrics?.res_available ? res.adaptive_metrics.response_effectiveness_res.toFixed(3) : 'N/A'}</div>
+                  <div>Previous defence: {res.adaptive_metrics?.previous_defence}</div>
+                  <div>State: {res.simulated_attacker_state || res.adaptive_metrics?.attacker_state}</div>
+                  {res.behaviour && <div>Transfer: {res.behaviour.bytes_transferred_mb.toFixed(1)} MiB · Files: {res.behaviour.files_accessed.toFixed(1)} · Login: {res.behaviour.login_hour.toFixed(1)}h</div>}
+                </div>
                 <div className="flex items-center space-x-6 text-right">
                   <div>
                     <div className="text-[10px] text-gray-500 uppercase">CALCULATED RISK</div>
@@ -339,7 +351,7 @@ export default function Simulation() {
           </div>
 
           <div className="p-3 bg-sentinel-950/60 rounded border border-sentinel-800 text-[11px] font-mono text-gray-400 flex items-center justify-between">
-            <span>Audit telemetry, alerts, and incident logs have been updated in PostgreSQL.</span>
+            <span>Audit telemetry, alerts, and incident logs have been saved to the application database.</span>
             <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = '/'; }} className="text-blue-400 hover:underline flex items-center space-x-1">
               <span>View On SOC Dashboard</span>
               <ArrowRight className="w-3 h-3" />

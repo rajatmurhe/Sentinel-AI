@@ -1,0 +1,135 @@
+{
+  "started_utc": "2026-10-20T15:05:39.712622+00:00",
+  "provenance": {
+    "source": "CERT",
+    "release": "r4.2",
+    "doi": "10.1184/R1/12841247.v1",
+    "archive_sha256": "586446b00e83ce5cdabf9dc889b0b6e7a9f44556cee3c03d39445d790122556c",
+    "answers_sha256": "ed21bf921def01e97326b314f2d1fa77651a945bd31bf513095f8ac7658c9ddd",
+    "features_sha256": "3450df04f185073d91939d8cf9760477d9caaf52fbc1f8d5ad1eda1e1a3e6b2f",
+    "rows": 330452,
+    "positive_user_days": 1364,
+    "users": 1000,
+    "source_event_counts": {
+      "file": 445581,
+      "http": 28434423,
+      "logon": 854859,
+      "email": 2629979,
+      "device": 405380
+    },
+    "features": [
+      "login_hour",
+      "files_accessed",
+      "bytes_transferred_mb",
+      "session_duration_min",
+      "logon_events",
+      "device_events",
+      "external_emails",
+      "http_events",
+      "off_hours_events",
+      "email_events"
+    ],
+    "label_definition": "Observed user-days within official insiders.csv start/end dates (inclusive). Window labels, not event-level maliciousness.",
+    "feature_notes": {
+      "bytes_transferred_mb": "External-recipient email size in MiB; NOT total network exfiltration.",
+      "files_accessed": "File event count; sensitivity unavailable.",
+      "session_duration_min": "Daily first-to-last observed event span; NOT exact session duration.",
+      "login_hour": "First logon hour in day; missing when no logon.",
+      "unavailable": "No invented sensitive-file labels, failed-login counts or privilege levels.",
+      "off_hours_events": "Events before 08:00 or at/after 18:00; fixed research assumption."
+    }
+  },
+  "evaluation_mode": "enhanced",
+  "threshold_selection": "validation F1 under FPR ceiling",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "max_train": 6000,
+  "episodes_per_seed": 20,
+  "turns": 8,
+  "target_validation_fpr": 0.05,
+  "splits": {
+    "train": {
+      "rows": 208167,
+      "positives": 770,
+      "first_date": "2010-01-02",
+      "last_date": "2010-10-28"
+    },
+    "validation": {
+      "rows": 60812,
+      "positives": 350,
+      "first_date": "2010-10-29",
+      "last_date": "2011-02-05"
+    },
+    "test": {
+      "rows": 61473,
+      "positives": 244,
+      "first_date": "2011-02-06",
+      "last_date": "2011-05-17"
+    }
+  },
+  "versions": {
+    "python": "3.11.4",
+    "numpy": "2.3.2",
+    "pandas": "2.3.1",
+    "sklearn": "1.8.0"
+  },
+  "source_hashes": {
+    "app/api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app/api/activities.py": "bc51f04efe3ff97857a89cf195fc78fa98a36c5e6ac03886483441f128ce2080",
+    "app/api/alerts.py": "732a30967b8e2325b4383bd1e1ba62bc35105115d1921f45e0b1bb43ff7a6687",
+    "app/api/analytics.py": "2b2059e61bb2a55ec9e0020726304fb5603a5d33a8c6684512234bb210bccea3",
+    "app/api/auth.py": "f246ec1e562b2f5dfeeca17bf9a9a7c06e3c7affaa2d1deb360e720919b598fa",
+    "app/api/experiments.py": "57e547cdc7c84cdba689287348d8ee43867458c3340dca4ec12b3e9a4ad4cb68",
+    "app/api/incidents.py": "ffa94575fd329781fcd847e04308439fd98c59dcf678f05e5adaf04ef7d3a6ee",
+    "app/api/research_results.py": "b5168939d57cdd0dd63d9ffba1953dfa11d9c105bc4eb9a418982ccae960fd2d",
+    "app/api/users.py": "357ac5681e27dd0f1044e5c50d0e9305eb2fbd9bb76d2edc241654274be3f58a",
+    "app/core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app/core/config.py": "ea57ce74e6511a5a4829ae5ef4532a7540fa0f2412d4a3281c44b9d6a9236e83",
+    "app/core/database.py": "fcfd60e8840479e1cab3c457832576639a025ed3e3fdda9904af42be9715dc3a",
+    "app/core/migrations.py": "0591e06b707559da8111830d38b53b51181028201c5dc6544680b56c1b966d39",
+    "app/core/pqc_dsa.py": "531e4b3c3c9aa8a441e3819533f60b78a415e42f4c91aaf221cbbd27994834a0",
+    "app/core/pqc_kem.py": "e640c4a73c656f52e5406f969ab5e1978a0d05c038f767469a9da6f6388eced2",
+    "app/core/security.py": "ec502bd57b4f2cf34da47e9f88b0128edd007d23eb1834c1ff54ca5632c48b52",
+    "app/main.py": "c56d4b1809b64fdccf9cbf413903695e2521e214fb1fca657e3cfa74606945fb",
+    "app/ml/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app/ml/adaptive_attacker.py": "a443c74eb26c3f6a4a9510c5946b1f1164b0b1719affa66aedbeb98d1696823c",
+    "app/ml/explainer.py": "c7d118afe29f169ea045e8a9daa8c33ee322304dd43009cf305a0a49b8937fd4",
+    "app/ml/feature_pipeline.py": "79dd2117380e604eb09c3a4534866531a5b997aee2b98d8021762347cdaecc59",
+    "app/ml/game_engine.py": "0c033b2f263c48860d73348e95c14298a2d70a8aa901e8ec671f401f8e55b12b",
+    "app/ml/generator.py": "26635b197f80caa2b2434773aedd9f125a3f6f42fb1f94fc55a36601d83872a3",
+    "app/ml/models.py": "3e916d2db65766d94a76492601033e88ec12a4fd24ae5c4bee427ae981daed83",
+    "app/models/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app/models/models.py": "e97e3af9fa45f16238c7196ad5eab1e422e2f229baf5a7ff1335aae85b0a4ce3",
+    "app/schemas/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app/schemas/schemas.py": "c38d0e8da6134643b308bf52a819085a013df4484e845212846f504fe1ee3222",
+    "app/services/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app/services/attacker_adaptation.py": "0ddc3e9ed4fe0c653700fd39c992b91143b0c61bca99e9823526e3f175286c17",
+    "app/services/orchestrator.py": "a8b83c79c7cbe02621fbb2b2b29ed5d7e408cfb0aa50e2049b3ade32c68eb9c1",
+    "research/__init__.py": "9afeaebd7d20ad44e211ec2d25c5c863a3b9a987b85c6c963dc4f9f86cc37b6f",
+    "research/download_cert.py": "840d031065024eea513f3b34c61b344846440b742b7caefb30a81547593640f0",
+    "research/enhanced.py": "6461263f2407fe5e98273254e45ee59d9534a8122501b5d9e3ee4440801b8ec6",
+    "research/preprocess_cert.py": "de1baaa523963035d384773ea0ccc7febdb3149e5047fa2bc2d5de7f2b808241",
+    "research/protocol.py": "5ff693cca9409e933f927a8cfea886a8a88d736f71d0673694b83f75096c0bbe",
+    "research/report.py": "487b895f1b172209ea278d003d806d5978f3410d2a415f50212f007cc0d78bf5",
+    "research/simulation.py": "2c82e5c6ce108d1a505f8093a214e170914ec4e688a0519b8a61722478219eae",
+    "research/statistics.py": "acab83fab8b65a05b310f343638e1aeed95a7216b59280bf06957a4e93ccd544",
+    "reset_admin.py": "9ec10fcbc0260f06439740c613cbd424435b0a5dcca39be977c86f666f634299",
+    "run_experiments.py": "83c12fbde41d39b083521e3c17939017390f56a007f66c5a7cd3b2edf7628654",
+    "tests/test_integration.py": "9d2ee94e6a22d0c2a51e4a71f08e7fe7c178772d4f08ff6b5ec9b6eec27ca015",
+    "tests/test_research.py": "f617bc235dcd1630b4dd4387ca778f368eeedd2244e7950d67078e37bdb32bff"
+  },
+  "protocol": "60/20/20 chronological dates; clean training bootstrap; scaler on training only; validation benign score anchors and FPR thresholds; per-user causal histories reset for each partition.",
+  "limitations": [
+    "CERT labels are insider activity windows, not exact event maliciousness.",
+    "Offline CERT replay cannot establish causal defence effectiveness; AAS/RES are observational.",
+    "Closed-loop stress tests use a separate synthetic detector and explicit simulated enforcement, not CERT counterfactuals.",
+    "Five seeds measure training/simulator variability on one temporal split, not confidence intervals across populations.",
+    "Ablations may worsen performance. No improvement is assumed."
+  ],
+  "completed_utc": "2026-10-20T15:13:05.651415+00:00"
+}

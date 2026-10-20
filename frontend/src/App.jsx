@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Simulation from './pages/Simulation';
 import Activities from './pages/Activities';
 import Login from './pages/Login';
+import Research from './pages/Research';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('sentinel_token'));
@@ -37,6 +38,7 @@ export default function App() {
         {activeTab === 'dashboard' && <Dashboard />}
         {activeTab === 'simulation' && <Simulation />}
         {activeTab === 'activities' && <Activities />}
+        {activeTab === 'research' && <Research />}
       </main>
     </div>
   );

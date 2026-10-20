@@ -45,6 +45,8 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <p className="text-sm text-gray-400">{stats?.model_source} · {stats?.enforcement_mode}</p>
+      <div className="text-sm border border-gray-800 rounded p-3">Latest AAS: {Number(stats?.latest_assessment?.aas || 0).toFixed(3)} · RES: {stats?.latest_assessment?.res_available ? Number(stats.latest_assessment.res).toFixed(3) : 'N/A'} · Previous defence: {stats?.latest_assessment?.previous_defence || 'UNKNOWN'}</div>
       {/* Top SOC Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <StatCard

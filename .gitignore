@@ -104,3 +104,8 @@ logs/
 /research/data/cert_r4.2_features.metadata.json
 /research/results/*
 !/research/results/.gitkeep
+
+# Local verification runtime and database
+.test-postgres/
+.pytest_cache/
+*.joblib

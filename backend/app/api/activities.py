@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.models import ActivityLog, User
-from app.schemas.schemas import ActivityCreate, ActivityOut
+from app.schemas.schemas import ActivityCreate, ActivityOut, TelemetryVector
 from app.services.orchestrator import orchestrator
 from datetime import datetime, timezone
 
@@ -73,3 +73,16 @@ def log_activity(activity_in: ActivityCreate, db: Session = Depends(get_db), cur
 @router.get("/recent", response_model=list[ActivityOut])
 def get_recent_activities(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return db.query(ActivityLog).order_by(ActivityLog.timestamp.desc()).limit(25).all()
+
+@router.post("/analyze")
+def analyze_telemetry(payload: TelemetryVector, db: Session = Depends(get_db),
+                      current_user: User = Depends(get_current_user)):
+    """Analyze the exact session vector supplied by the dashboard."""
+    sample = payload.model_dump()
+    db.add(ActivityLog(user_id=current_user.id, action_type="MANUAL_TELEMETRY",
+                       bytes_transferred=sample['bytes_transferred_mb'],
+                       is_sensitive_file=sample['sensitive_files_accessed'] > 0,
+                       failed_attempts=int(sample['failed_logins']),
+                       privilege_level=int(sample['privilege_level']),
+                       session_duration_sec=sample['session_duration_min'] * 60))
+    return {"message": "Telemetry analyzed", "assessment": orchestrator.analyze_event(current_user.id, sample, db)}
