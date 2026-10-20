@@ -40,10 +40,17 @@ class ThreatAnalysisRecord(Base):
     raw_features = Column(JSON, nullable=False)
     iforest_score = Column(Float, nullable=False)
     ocsvm_score = Column(Float, nullable=False)
-    risk_score = Column(Float, nullable=False)  # 0 to 100
+    risk_score = Column(Float, nullable=False)
     shap_attributions = Column(JSON, nullable=False)
-    game_action = Column(String, nullable=False)  # ALLOW, MONITOR, STEP_UP_AUTH, RESTRICT, REVOKE
-    attacker_state = Column(String, default="UNKNOWN")
+
+    # --- NEW: PART 2 RESEARCH METRICS ---
+    attacker_state_probs = Column(JSON, nullable=True)     # Step 3
+    adaptation_score = Column(Float, default=0.0)          # Step 4: AAS
+    response_effectiveness = Column(Float, default=0.0)    # Step 5: RES
+    attacker_state = Column(String, default="UNKNOWN")     # Dominant State
+    # ------------------------------------
+
+    game_action = Column(String, nullable=False)
 
 class Alert(Base):
     __tablename__ = "alerts"
@@ -80,3 +87,24 @@ class SecureAuditLog(Base):
     event_payload = Column(JSON, nullable=False)
     cryptographic_hash = Column(String(256), nullable=False)
     previous_hash = Column(String(256), nullable=False, default="GENESIS_BLOCK")
+
+class ResearchInteraction(Base):
+    """Immutable metric inputs captured at decision time; added as a new table.
+
+    create_all creates this table without altering existing historical tables.
+    """
+    __tablename__ = "research_interactions"
+    id = Column(Integer, primary_key=True)
+    threat_record_id = Column(Integer, ForeignKey("threat_analysis_records.id"), nullable=False, unique=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    previous_behaviour = Column(JSON, nullable=False)
+    current_behaviour = Column(JSON, nullable=False)
+    previous_defence = Column(String, nullable=False)
+    previous_risk = Column(Float, nullable=False)
+    current_risk = Column(Float, nullable=False)
+    current_attacker_state = Column(String, nullable=False)
+    aas = Column(Float, nullable=False)
+    res = Column(Float, nullable=False)
+    res_available = Column(Boolean, nullable=False)
+    res_components = Column(JSON, nullable=False)
+    game_details = Column(JSON, nullable=False)

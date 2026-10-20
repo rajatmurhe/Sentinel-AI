@@ -92,6 +92,15 @@ frontend/.env.development.local
 frontend/.env.test.local
 frontend/.env.production.local
 
+Readme
+
+
 # Logs
 logs/
 *.log
+# Large local CERT archives, derived features, and generated experiment outputs
+/research/data/raw/
+/research/data/cert_r4.2_features.csv
+/research/data/cert_r4.2_features.metadata.json
+/research/results/*
+!/research/results/.gitkeep

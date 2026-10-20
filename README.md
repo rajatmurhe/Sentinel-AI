@@ -1,6 +1,6 @@
 # 🛡️ SentinelAI: Adaptive Malicious Insider Threat Detection
 
-An end-to-end **cybersecurity research framework and data pipeline** designed to detect and respond to **adaptive insider threats** using a **Bayesian Stackelberg Game**.
+An end-to-end **cybersecurity research framework and data pipeline** designed to detect and respond to **adaptive insider threats** using an **adaptive Stackelberg game** with an explicit attacker best response.
 
 Unlike traditional anomaly detection systems that rely on fixed behavioral patterns, SentinelAI models how attackers can change their behavior to avoid detection. It combines **Game Theory, Explainable AI (XAI), and Post-Quantum Cryptography (PQC)** to create an adaptive and secure threat detection environment.
 
@@ -80,11 +80,11 @@ SentinelAI models the attacker-defender interaction as a **dynamic Stackelberg G
 <!-- 📸 SIMULATOR SCREENSHOT -->
 ![Threat Simulator Input](./images/threat-simulator.png)
 
-### Research Ablation Study & Time-Series Graphs
+### Simulator interface preview
 
-> Displays how the **Attacker Adaptation Score (AAS)** and **Response Effectiveness (RES)** change across multiple attack turns.
+> This screenshot shows the dashboard chart layout. It is a UI preview, not experimental evidence. Numerical research figures and tables are generated from the seeded CERT evaluation described below.
 
-<!-- 📸 GRAPHS SCREENSHOT -->
+<!-- 📸 UI PREVIEW -->
 ![Ablation Study Graphs](./images/ablation-graphs.png)
 
 ### ML-KEM & ML-DSA Post-Quantum Cryptography
@@ -150,8 +150,8 @@ The PQC layer contains two main components:
 
 | Metric | Range | Description | Game Theory Role |
 | :--- | :---: | :--- | :--- |
-| **AAS** | `-1.0` to `1.0` | **Attacker Adaptation Score:** Measures how much the attacker's strategy changes. | Helps identify strategy changes such as **Aggressive → Stealth** behavior. |
-| **RES** | `-1.0` to `1.0` | **Response Effectiveness:** Measures how well the SOC's previous action handled the current threat. | Helps determine whether actions such as **Revoke** or **Restrict** were effective. |
+| **AAS** | `0.0` to `1.0` | Normalized RMS change in behaviour features after a prior defender decision. | High AAS means substantial behaviour change after the response. |
+| **RES** | `0.0` to `1.0` | Weighted observed reduction in risk, activity, and confidentiality exposure after the prior response. | High RES means the measured threat indicators fell; this observational metric alone does not prove causation. |
 
 ---
 
@@ -271,6 +271,30 @@ From the dashboard, navigate to the **Threat Simulator** tab to run the attack s
     └── README.md
 
 ---
+
+## Research evaluation (CERT r4.2)
+
+The research game is an adaptive, pure-strategy Stackelberg model, not a Bayesian game. The defender chooses ALLOW, MONITOR, STEP_UP_AUTH, RESTRICT, or REVOKE. The attacker best-responds with aggressive exfiltration, stealth exfiltration, probing, or abort. Utilities include threat urgency, estimated action success, damage, attack cost, and defender cost. These simulator payoffs are stated assumptions, not values fitted from CERT.
+
+AAS is the normalized RMS distance between the current and prior user-day feature vectors, scaled by robust feature ranges fit on benign training data. It is measured after any prior defender decision, including ALLOW, because an attacker may escalate after access is left open. RES combines observed relative risk reduction (0.5), activity reduction (0.2), and confidentiality/exfiltration reduction (0.3), renormalizing over components available in the dataset. CERT does not provide sensitive-file labels, so its confidentiality features are proxies.
+
+For available features `j`, AAS is `sqrt(mean(min(|B[t,j] - B[t-1,j]| / s[j], 1)^2))`; `s[j]` is the benign training-set 95th–5th percentile range (unit floor for constant features). Clock time uses shortest circular distance. RES is the available-weight mean of clipped relative reductions in risk, activity intensity, and confidentiality exposure, with weights 0.5, 0.2, and 0.3. If there is no prior decision or no measurable component, the corresponding metric is zero and RES is marked unavailable.
+
+The adaptive game uses urgency `q = 0.65*r + 0.20*AAS + 0.15*(1-RES)*r` when a prior outcome is available (the last term is omitted otherwise), where `r` is risk normalized to 0–1. For each defender commitment `d`, the attacker selects its highest-utility strategy `a*(d)`. The defender selects the action maximizing its utility against that best response. Attacker utility uses the estimated success probability, strategy damage/preference, and attack cost; defender utility is `q*(1-p*damage) - defence_cost*(1-0.5*r)`. Success estimates, damage, costs, and weights are declared simulator assumptions, not learned from CERT. Ties use the defender-pessimistic attacker response.
+
+For the detection ablations, `+ AAS` scores `risk + 20*AAS`; `+ AAS + RES` adds `15*(1-RES)*(risk/100)` when RES is available. The full model uses the adaptive game urgency and its expected-utility advantage over ALLOW, with its threshold calibrated on validation benign rows. All reported policy thresholds are validation-only.
+
+The CERT workflow uses the official r4.2 archive and its insider answer key. Cite the dataset as Lindauer, Brian (2020), [Insider Threat Test Dataset](https://doi.org/10.1184/R1/12841247.v1), Carnegie Mellon University. It streams logs into user-day features; labels mark official insider activity windows, not individual malicious events. The experiment code uses chronological 60/20/20 date splits, fits preprocessing and models on training only, calibrates thresholds on validation benign rows, and tests on later dates. Isolation Forest and One-Class SVM are compared with static SentinelAI and three ablations. Five default seeds measure model bootstrap and simulator variability. The closed-loop adaptive attacker is a separate simulator; its results are not CERT observations or claims about deployed enforcement.
+
+From `backend/`, run:
+
+```sh
+python -m research.download_cert --output ../research/data/raw/r4.2.tar.bz2
+python -m research.preprocess_cert --archive ../research/data/raw/r4.2.tar.bz2 --answers ../research/data/raw/answers.tar.bz2 --output ../research/data/cert_r4.2_features.csv
+python run_experiments.py --dataset ../research/data/cert_r4.2_features.csv --output ../research/results/cert-r4.2 --seeds 0 1 2 3 4
+```
+
+Results include per-seed predictions and traces, mean ± standard deviation tables, `research-results.png`, `adaptive-metrics.png`, and a methods/limitations report. The multi-gigabyte CERT archive is excluded from version control; its SHA-256 is verified by the downloader before preprocessing. Use `--user-limit N` only for a recorded pilot, not the final full-dataset evaluation.
 
 ## 🔬 Research Focus
 

@@ -1,0 +1,39 @@
+{
+  "source": "CERT",
+  "release": "r4.2",
+  "doi": "10.1184/R1/12841247.v1",
+  "archive_sha256": "586446b00e83ce5cdabf9dc889b0b6e7a9f44556cee3c03d39445d790122556c",
+  "answers_sha256": "ed21bf921def01e97326b314f2d1fa77651a945bd31bf513095f8ac7658c9ddd",
+  "features_sha256": "3450df04f185073d91939d8cf9760477d9caaf52fbc1f8d5ad1eda1e1a3e6b2f",
+  "rows": 330452,
+  "positive_user_days": 1364,
+  "users": 1000,
+  "source_event_counts": {
+    "file": 445581,
+    "http": 28434423,
+    "logon": 854859,
+    "email": 2629979,
+    "device": 405380
+  },
+  "features": [
+    "login_hour",
+    "files_accessed",
+    "bytes_transferred_mb",
+    "session_duration_min",
+    "logon_events",
+    "device_events",
+    "external_emails",
+    "http_events",
+    "off_hours_events",
+    "email_events"
+  ],
+  "label_definition": "Observed user-days within official insiders.csv start/end dates (inclusive). Window labels, not event-level maliciousness.",
+  "feature_notes": {
+    "bytes_transferred_mb": "External-recipient email size in MiB; NOT total network exfiltration.",
+    "files_accessed": "File event count; sensitivity unavailable.",
+    "session_duration_min": "Daily first-to-last observed event span; NOT exact session duration.",
+    "login_hour": "First logon hour in day; missing when no logon.",
+    "unavailable": "No invented sensitive-file labels, failed-login counts or privilege levels.",
+    "off_hours_events": "Events before 08:00 or at/after 18:00; fixed research assumption."
+  }
+}
